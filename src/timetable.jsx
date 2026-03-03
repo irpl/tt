@@ -61,7 +61,7 @@ function ClassBlock({ course, pixelsPerHour, isMobile, isCurrent }) {
         flexDirection: "column",
         justifyContent: isTiny ? "center" : "flex-start",
         gap: "1px",
-        ...(isCurrent ? { boxShadow: `0 0 12px ${inst.color}40`, border: `1px solid ${inst.color}60`, borderLeft: `2px solid ${inst.color}` } : {}),
+        ...(isCurrent ? { boxShadow: `0 0 12px ${inst.color}40`, outline: `1px solid ${inst.color}60`, outlineOffset: "-1px" } : {}),
       }}>
         <span style={{
           fontSize: "10px",
@@ -120,8 +120,8 @@ function ClassBlock({ course, pixelsPerHour, isMobile, isCurrent }) {
         gap: isSmall ? "0" : "2px",
         ...(isCurrent ? {
           boxShadow: `0 0 16px ${inst.color}40, inset 0 0 20px ${inst.color}10`,
-          border: `1px solid ${inst.color}50`,
-          borderLeft: `3px solid ${inst.color}`,
+          outline: `1px solid ${inst.color}50`,
+          outlineOffset: "-1px",
         } : {}),
       }}
       onMouseEnter={(e) => {
