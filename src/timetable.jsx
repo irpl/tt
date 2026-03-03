@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
+const DAY_INDEX_MAP = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }; // JS getDay() -> DAYS index
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const START_HOUR = 8;
 const END_HOUR = 21;
@@ -35,7 +36,7 @@ function formatTime(h) {
   return `${hr}${suffix}`;
 }
 
-function ClassBlock({ course, pixelsPerHour, isMobile }) {
+function ClassBlock({ course, pixelsPerHour, isMobile, isCurrent }) {
   const inst = institutions[course.inst];
   const top = (course.start - START_HOUR) * pixelsPerHour;
   const height = (course.end - course.start) * pixelsPerHour;
@@ -50,16 +51,17 @@ function ClassBlock({ course, pixelsPerHour, isMobile }) {
         left: "2px",
         right: "2px",
         height: `${height - 2}px`,
-        background: inst.bg,
+        background: isCurrent ? `${inst.color}30` : inst.bg,
         borderLeft: `2px solid ${inst.color}`,
         borderRadius: "4px",
         padding: isTiny ? "1px 3px" : "3px 4px",
         overflow: "hidden",
-        zIndex: 2,
+        zIndex: isCurrent ? 5 : 2,
         display: "flex",
         flexDirection: "column",
         justifyContent: isTiny ? "center" : "flex-start",
         gap: "1px",
+        ...(isCurrent ? { boxShadow: `0 0 12px ${inst.color}40`, border: `1px solid ${inst.color}60`, borderLeft: `2px solid ${inst.color}` } : {}),
       }}>
         <span style={{
           fontSize: "10px",
@@ -104,18 +106,23 @@ function ClassBlock({ course, pixelsPerHour, isMobile }) {
         left: "3px",
         right: "3px",
         height: `${height - 4}px`,
-        background: inst.bg,
+        background: isCurrent ? `${inst.color}30` : inst.bg,
         borderLeft: `3px solid ${inst.color}`,
         borderRadius: "6px",
         padding: isSmall ? "3px 8px" : "8px 10px",
         overflow: "hidden",
         cursor: "default",
         transition: "transform 0.15s ease, box-shadow 0.15s ease",
-        zIndex: 2,
+        zIndex: isCurrent ? 5 : 2,
         display: "flex",
         flexDirection: "column",
         justifyContent: isSmall ? "center" : "flex-start",
         gap: isSmall ? "0" : "2px",
+        ...(isCurrent ? {
+          boxShadow: `0 0 16px ${inst.color}40, inset 0 0 20px ${inst.color}10`,
+          border: `1px solid ${inst.color}50`,
+          borderLeft: `3px solid ${inst.color}`,
+        } : {}),
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "scale(1.02)";
@@ -124,8 +131,8 @@ function ClassBlock({ course, pixelsPerHour, isMobile }) {
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "scale(1)";
-        e.currentTarget.style.boxShadow = "none";
-        e.currentTarget.style.zIndex = "2";
+        e.currentTarget.style.boxShadow = isCurrent ? `0 0 16px ${inst.color}40, inset 0 0 20px ${inst.color}10` : "none";
+        e.currentTarget.style.zIndex = isCurrent ? "5" : "2";
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "4px" }}>
@@ -140,18 +147,34 @@ function ClassBlock({ course, pixelsPerHour, isMobile }) {
         }}>
           {course.code}
         </span>
-        <span style={{
-          fontSize: "9px",
-          fontWeight: 600,
-          color: inst.color,
-          background: `${inst.color}18`,
-          padding: "1px 5px",
-          borderRadius: "4px",
-          whiteSpace: "nowrap",
-          flexShrink: 0,
-        }}>
-          {inst.label}
-        </span>
+        <div style={{ display: "flex", gap: "4px", alignItems: "center", flexShrink: 0 }}>
+          {isCurrent && (
+            <span style={{
+              fontSize: "8px",
+              fontWeight: 700,
+              color: "#0f172a",
+              background: inst.color,
+              padding: "1px 5px",
+              borderRadius: "4px",
+              whiteSpace: "nowrap",
+              letterSpacing: "0.05em",
+              animation: "nowPulse 2s ease-in-out infinite",
+            }}>
+              NOW
+            </span>
+          )}
+          <span style={{
+            fontSize: "9px",
+            fontWeight: 600,
+            color: inst.color,
+            background: `${inst.color}18`,
+            padding: "1px 5px",
+            borderRadius: "4px",
+            whiteSpace: "nowrap",
+          }}>
+            {inst.label}
+          </span>
+        </div>
       </div>
       {!isSmall && (
         <>
@@ -197,6 +220,20 @@ export default function Timetable() {
   const [mobileView, setMobileView] = useState("week");
   const today = new Date().getDay();
   const [selectedDay, setSelectedDay] = useState(today >= 1 && today <= 5 ? today - 1 : 0);
+
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const currentDayIndex = DAY_INDEX_MAP[now.getDay()]; // undefined on weekends
+  const currentHour = now.getHours() + now.getMinutes() / 60;
+  const isCurrentBlock = (course) =>
+    currentDayIndex !== undefined &&
+    course.day === DAYS[currentDayIndex] &&
+    currentHour >= course.start &&
+    currentHour < course.end;
 
   useEffect(() => {
     const update = () => {
@@ -475,7 +512,7 @@ export default function Timetable() {
                 />
               ))}
               {filtered.filter(c => c.day === DAYS[selectedDay]).map(c => (
-                <ClassBlock key={c.id} course={c} pixelsPerHour={pixelsPerHour} isMobile={false} />
+                <ClassBlock key={c.id} course={c} pixelsPerHour={pixelsPerHour} isMobile={false} isCurrent={isCurrentBlock(c)} />
               ))}
             </div>
           </div>
@@ -563,7 +600,7 @@ export default function Timetable() {
                   ))}
                   {/* Class blocks */}
                   {dayClasses.map(c => (
-                    <ClassBlock key={c.id} course={c} pixelsPerHour={pixelsPerHour} isMobile={isMobile} />
+                    <ClassBlock key={c.id} course={c} pixelsPerHour={pixelsPerHour} isMobile={isMobile} isCurrent={isCurrentBlock(c)} />
                   ))}
                 </div>
               );

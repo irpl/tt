@@ -3,3 +3,8 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+@keyframes nowPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
