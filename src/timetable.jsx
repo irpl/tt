@@ -9,16 +9,18 @@ import { useState, useEffect } from "react";
 // rather than scrolling sideways. Three geometry profiles share one renderer:
 // the wide desktop grid, a compact all-days mobile week, and a single day.
 
-const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sunday"];
-const DAY_ABBR = ["M", "T", "W", "T", "F", "S"];
-const DAY_INDEX_MAP = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 0: 5 }; // JS getDay() -> DAYS index
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const DAY_ABBR = ["M", "T", "W", "T", "F", "S", "S"];
+const DAY_INDEX_MAP = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 0: 6 }; // JS getDay() -> DAYS index
 const H0 = 8;
-const H1 = 20;
+const H1 = 24;
 const MOBILE_MAX = 767;
 
 // day, start, end, kind, title, group, room
 // kind g1/g2/g3 = ECC, coloured by the class group taking the session
 // kind tut = private physics tutorials (not ECC, not UWI)
+// kind bae = personal time; a span crossing midnight is split at 24:00 because
+// one column cannot hold it
 const BLOCKS = [
   [0, 8, 10, "g1", "Intro to Programming", "ADCS1 · ADCSNM1A · AMIS1A", "CPRG1201 / Lab 2"],
   [0, 13, 15, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
@@ -37,14 +39,17 @@ const BLOCKS = [
   [4, 18, 20, "uwi", "Engineering IoT Systems", "", "ECSE 3038 / Block C"],
   [2, 17.5, 18.5, "tut", "Physics tutorial", "Hinal", ""],
   [2, 19, 20, "tut", "Physics tutorial", "Arush", ""],
-  [5, 12, 14, "tut", "Physics tutorial", "Arush", ""],
+  [6, 12, 14, "tut", "Physics tutorial", "Arush", ""],
+  [3, 17.25, 24, "bae", "JanBae😘🥰", "", ""],
+  [4, 20.25, 24, "bae", "JanBae😘🥰", "", ""],
+  [5, 0, 11.75, "bae", "JanBae😘🥰", "", ""],
 ];
 
 // Geometry profiles. `detail` picks how much text a block carries.
 const PROFILES = {
   desktop: { PADL: 74, PADT: 56, COLW: 184, ROWH: 50, PADR: 10, detail: "full", hourFmt: "long" },
-  week: { PADL: 27, PADT: 30, COLW: 56, ROWH: 44, PADR: 3, detail: "compact", hourFmt: "short" },
-  day: { PADL: 48, PADT: 30, COLW: 320, ROWH: 54, PADR: 4, detail: "full", hourFmt: "long" },
+  week: { PADL: 27, PADT: 30, COLW: 56, ROWH: 36, PADR: 3, detail: "compact", hourFmt: "short" },
+  day: { PADL: 48, PADT: 30, COLW: 320, ROWH: 40, PADR: 4, detail: "full", hourFmt: "long" },
 };
 
 const GROUPS = [
@@ -108,16 +113,20 @@ const LEGEND = [
   ["uwi", "ECSE 3038 — Engineering IoT Systems, 5 hrs/week"],
   ["tut", "Physics tutorials — private"],
   ["trv", "Required travel hour"],
+  ["bae", "JanBae😘🥰"],
 ];
 
 function hm(v) {
-  return v === Math.trunc(v) ? `${v}:00` : `${Math.trunc(v)}:30`;
+  const h = Math.floor(v);
+  const m = Math.round((v - h) * 60);
+  return `${h}:${String(m).padStart(2, "0")}`;
 }
 
 // Short label for the narrow mobile week columns: the course code, or the
 // student's name for a tutorial.
-function shortLabel([, , , kind, , grp, room]) {
+function shortLabel([, , , kind, title, grp, room]) {
   if (kind === "tut") return grp;
+  if (kind === "bae") return title;
   return room.split("/")[0].trim().replace(/\s+/g, "");
 }
 
@@ -137,10 +146,15 @@ function Block({ block, isNow, col, profile }) {
   const { PADL, PADT, COLW, ROWH, detail } = profile;
   const compact = detail === "compact";
 
+  // Draw inside the visible grid — a block can start before H0 (the Saturday
+  // half of a span that crossed midnight) — but keep labelling the true times.
+  const drawSt = Math.max(st, H0);
+  const drawE = Math.min(e, H1);
+
   const x = PADL + col * COLW + (compact ? 2 : 4);
-  const y = PADT + (st - H0) * ROWH + (compact ? 2 : 3);
+  const y = PADT + (drawSt - H0) * ROWH + (compact ? 2 : 3);
   const w = COLW - (compact ? 4 : 8);
-  const hgt = (e - st) * ROWH - (compact ? 4 : 6);
+  const hgt = (drawE - drawSt) * ROWH - (compact ? 4 : 6);
   const tx = x + (compact ? 5 : 14);
   const cls = `b ${kind}${isNow ? " now" : ""}`;
   const pill = isNow && !compact ? <NowPill x={x + w - 40} y={y + 6} /> : null;
@@ -165,7 +179,7 @@ function Block({ block, isNow, col, profile }) {
 
   // Narrow mobile column: a course code and the start time is all that fits.
   if (compact) {
-    const tiny = hgt < 34;
+    const tiny = hgt < 30;
     return (
       <g className={cls}>
         <rect x={x} y={y} width={w} height={hgt} rx="3" />
@@ -179,6 +193,20 @@ function Block({ block, isNow, col, profile }) {
           </text>
         )}
         {isNow && <circle className="nowdot" cx={x + w - 6} cy={y + 6} r="3" />}
+      </g>
+    );
+  }
+
+  // Personal time — title and hours only. Checked before the UWI branch below,
+  // which would otherwise claim it: these blocks carry no class group either.
+  if (kind === "bae") {
+    return (
+      <g className={cls}>
+        <rect x={x} y={y} width={w} height={hgt} rx="3" />
+        <rect className="spine" x={x} y={y} width="4" height={hgt} />
+        <text className="bt" x={tx} y={y + 19}>{title}</text>
+        <text className="bh" x={tx} y={y + 34}>{hm(st)}–{hm(e)}</text>
+        {pill}
       </g>
     );
   }
@@ -261,7 +289,7 @@ function Grid({ now, days, profile, onPickDay }) {
   const hours = [];
   for (let h = H0; h <= H1; h++) hours.push(h);
 
-  const todayIndex = DAY_INDEX_MAP[now.getDay()]; // undefined on Saturday
+  const todayIndex = DAY_INDEX_MAP[now.getDay()];
   const nowHour = now.getHours() + now.getMinutes() / 60;
   const isNowBlock = ([d, st, e]) =>
     todayIndex !== undefined && d === todayIndex && nowHour >= st && nowHour < e;
@@ -273,7 +301,7 @@ function Grid({ now, days, profile, onPickDay }) {
       className={onPickDay ? "tt tappable" : "tt"}
       viewBox={`0 0 ${W} ${H}`}
       role="img"
-      aria-label="Timetable showing ECC classes, the Engineering IoT Systems blocks and the physics tutorials"
+      aria-label="Timetable showing ECC classes, the Engineering IoT Systems blocks, the physics tutorials and personal time"
     >
       <defs>
         <pattern
@@ -366,7 +394,7 @@ export default function Timetable() {
   const [view, setView] = useState("week"); // mobile only: "week" | "day"
   const [day, setDay] = useState(() => {
     const d = DAY_INDEX_MAP[new Date().getDay()];
-    return d === undefined ? 0 : d; // Saturday falls back to Monday
+    return d === undefined ? 0 : d;
   });
 
   useEffect(() => {
@@ -406,8 +434,9 @@ export default function Timetable() {
           Every ECC teaching block, colour-coded by <b>which class group you have</b>, with the
           three Engineering IoT Systems blocks fitted around them. Intro to Programming runs twice
           over — the same course delivered to two separate groups, three sessions each. The dashed
-          bands are the mandatory hour of travel between campuses, and the gold blocks are private
-          physics tutorials. Reflects the ECC timetable revision published 21 August.
+          bands are the mandatory hour of travel between campuses, the gold blocks are private
+          physics tutorials, and the pink blocks are time with JanBae😘🥰. Reflects the ECC
+          timetable revision published 21 August.
         </p>
       </header>
 

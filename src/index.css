@@ -8,6 +8,7 @@
   --g3:#5B4A99; --g3-fill:#EAE6F6; --g3-ink:#413277;
   --uwi:#A8412A; --uwi-fill:#F8E7E1; --uwi-ink:#8A3220;
   --tut:#8A6D1F; --tut-fill:#F7EFD8; --tut-ink:#6E5514;
+  --bae:#C2477F; --bae-fill:#FBE3EE; --bae-ink:#9B2F62;
   --trv:#8E837B;
   color-scheme:light dark;
 }
@@ -19,6 +20,7 @@
   --g3:#AC9BEA; --g3-fill:#221D3B; --g3-ink:#CDC2F6;
   --uwi:#E89179; --uwi-fill:#39201A; --uwi-ink:#F3BCA9;
   --tut:#D8B75A; --tut-fill:#332A12; --tut-ink:#EDD589;
+  --bae:#F09CC4; --bae-fill:#3A1B2A; --bae-ink:#F8C6DC;
   --trv:#8B7E75;
 } }
 :root[data-theme="dark"]{
@@ -29,6 +31,7 @@
   --g3:#AC9BEA; --g3-fill:#221D3B; --g3-ink:#CDC2F6;
   --uwi:#E89179; --uwi-fill:#39201A; --uwi-ink:#F3BCA9;
   --tut:#D8B75A; --tut-fill:#332A12; --tut-ink:#EDD589;
+  --bae:#F09CC4; --bae-fill:#3A1B2A; --bae-ink:#F8C6DC;
   --trv:#8B7E75;
 }
 
@@ -94,6 +97,11 @@ svg.tt{display:block; width:100%; height:auto}
 .b.tut rect.spine{fill:var(--tut); stroke:none}
 .b.tut .bt,.b.tut .bg{fill:var(--tut-ink)}
 .b.tut .bh{fill:var(--tut)}
+.b.bae{--accent:var(--bae)}
+.b.bae rect{fill:var(--bae-fill); stroke:var(--bae)}
+.b.bae rect.spine{fill:var(--bae); stroke:none}
+.b.bae .bt,.b.bae .bg{fill:var(--bae-ink)}
+.b.bae .bs,.b.bae .bh{fill:var(--bae)}
 .b.trv rect{fill:none; stroke:var(--trv); stroke-dasharray:3 3; opacity:.9}
 .hl{stroke:var(--trv); stroke-width:1; opacity:.3}
 .tl{fill:var(--trv); font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.11em}
@@ -113,6 +121,7 @@ svg.tt{display:block; width:100%; height:auto}
 .b.g3 .mt{fill:var(--g3-ink)} .b.g3 .mh{fill:var(--g3)}
 .b.uwi .mt{fill:var(--uwi-ink)} .b.uwi .mh{fill:var(--uwi)}
 .b.tut .mt{fill:var(--tut-ink)} .b.tut .mh{fill:var(--tut)}
+.b.bae .mt{fill:var(--bae-ink)} .b.bae .mh{fill:var(--bae)}
 .daycol .hit{fill:transparent}
 .daycol.tap{cursor:pointer}
 .daycol.tap:active .hit{fill:var(--ink); opacity:.06}
@@ -143,6 +152,7 @@ svg.tt{display:block; width:100%; height:auto}
 .sw.g3{background:var(--g3-fill); border-color:var(--g3)}
 .sw.uwi{background:var(--uwi-fill); border-color:var(--uwi)}
 .sw.tut{background:var(--tut-fill); border-color:var(--tut)}
+.sw.bae{background:var(--bae-fill); border-color:var(--bae)}
 .sw.trv{background:none; border-color:var(--trv); border-style:dashed}
 .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:14px}
 .groups{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px}
