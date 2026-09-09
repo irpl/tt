@@ -11,9 +11,9 @@ export default defineConfig({
       manifest: {
         name: 'Timetable – Phillip Logan',
         short_name: 'Timetable',
-        description: 'Semester 2 2025–2026 Class Schedule',
-        theme_color: '#0f172a',
-        background_color: '#0f172a',
+        description: 'Semester 1 2026/27 class schedule — ECC, ECSE 3038 and tutorials',
+        theme_color: '#EEF1F2',
+        background_color: '#EEF1F2',
         display: 'standalone',
         orientation: 'any',
         icons: [

@@ -1,10 +1,176 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap");
+
+:root{
+  --paper:#EEF1F2; --panel:#FFFFFF; --ink:#141A1D; --ink2:#5C686E; --ink3:#8A959A;
+  --rule:#D6DDE0; --edge:#AAB5BA;
+  --g1:#2E5C7A; --g1-fill:#E2ECF2; --g1-ink:#1D4661;
+  --g2:#2C6B4E; --g2-fill:#E0EFE7; --g2-ink:#1C4D37;
+  --g3:#5B4A99; --g3-fill:#EAE6F6; --g3-ink:#413277;
+  --uwi:#A8412A; --uwi-fill:#F8E7E1; --uwi-ink:#8A3220;
+  --tut:#8A6D1F; --tut-fill:#F7EFD8; --tut-ink:#6E5514;
+  --trv:#8E837B;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --paper:#0E1214; --panel:#161B1E; --ink:#E9EEF0; --ink2:#95A1A7; --ink3:#6C787E;
+  --rule:#252D32; --edge:#3A454B;
+  --g1:#79B2D2; --g1-fill:#172D3B; --g1-ink:#B7D8EA;
+  --g2:#6FC59D; --g2-fill:#132D22; --g2-ink:#A6DFC2;
+  --g3:#AC9BEA; --g3-fill:#221D3B; --g3-ink:#CDC2F6;
+  --uwi:#E89179; --uwi-fill:#39201A; --uwi-ink:#F3BCA9;
+  --tut:#D8B75A; --tut-fill:#332A12; --tut-ink:#EDD589;
+  --trv:#8B7E75;
+} }
+:root[data-theme="dark"]{
+  --paper:#0E1214; --panel:#161B1E; --ink:#E9EEF0; --ink2:#95A1A7; --ink3:#6C787E;
+  --rule:#252D32; --edge:#3A454B;
+  --g1:#79B2D2; --g1-fill:#172D3B; --g1-ink:#B7D8EA;
+  --g2:#6FC59D; --g2-fill:#132D22; --g2-ink:#A6DFC2;
+  --g3:#AC9BEA; --g3-fill:#221D3B; --g3-ink:#CDC2F6;
+  --uwi:#E89179; --uwi-fill:#39201A; --uwi-ink:#F3BCA9;
+  --tut:#D8B75A; --tut-fill:#332A12; --tut-ink:#EDD589;
+  --trv:#8B7E75;
 }
 
-@keyframes nowPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+*{margin:0; padding:0; box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-variant-numeric:tabular-nums; padding:clamp(20px,4vw,52px);
+  -webkit-font-smoothing:antialiased;
 }
+img{max-width:100%}
+
+.wrap{max-width:1260px; margin:0 auto; display:flex; flex-direction:column; gap:28px}
+header{display:flex; flex-direction:column; gap:9px}
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink3);
+}
+h1{
+  font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif; font-weight:700;
+  font-size:clamp(28px,4.4vw,42px); line-height:1.05; letter-spacing:-.022em;
+  margin:0; text-wrap:balance;
+}
+.lede{margin:0; max-width:62ch; color:var(--ink2); font-size:15.5px; line-height:1.55}
+.board{
+  background:var(--panel); border:1px solid var(--rule); border-radius:8px;
+  padding:18px 20px 22px; overflow-x:auto;
+}
+svg.tt{display:block; width:100%; min-width:1120px; height:auto}
+.rule{stroke:var(--rule); stroke-width:1}
+.rule.edge{stroke:var(--edge)}
+.hr{fill:var(--ink3); font-family:"IBM Plex Mono",monospace; font-size:11px; text-anchor:end}
+.day{
+  fill:var(--ink); font-family:"Bricolage Grotesque",sans-serif; font-weight:700;
+  font-size:15px; letter-spacing:-.012em;
+}
+.day.istoday{fill:var(--uwi-ink)}
+.b rect{stroke-width:1}
+.b.g1{--accent:var(--g1)}
+.b.g1 rect{fill:var(--g1-fill); stroke:var(--g1)}
+.b.g1 rect.spine{fill:var(--g1); stroke:none}
+.b.g1 .bt,.b.g1 .bg{fill:var(--g1-ink)}
+.b.g1 .bs,.b.g1 .bh{fill:var(--g1)}
+.b.g2{--accent:var(--g2)}
+.b.g2 rect{fill:var(--g2-fill); stroke:var(--g2)}
+.b.g2 rect.spine{fill:var(--g2); stroke:none}
+.b.g2 .bt,.b.g2 .bg{fill:var(--g2-ink)}
+.b.g2 .bs,.b.g2 .bh{fill:var(--g2)}
+.b.g3{--accent:var(--g3)}
+.b.g3 rect{fill:var(--g3-fill); stroke:var(--g3)}
+.b.g3 rect.spine{fill:var(--g3); stroke:none}
+.b.g3 .bt,.b.g3 .bg{fill:var(--g3-ink)}
+.b.g3 .bs,.b.g3 .bh{fill:var(--g3)}
+.b.uwi{--accent:var(--uwi)}
+.b.uwi rect{fill:var(--uwi-fill); stroke:var(--uwi)}
+.b.uwi rect.spine{fill:var(--uwi); stroke:none}
+.b.uwi .bt{fill:var(--uwi-ink)}
+.b.uwi .bs,.b.uwi .bh{fill:var(--uwi)}
+.b.uwi .bt{font-size:11.5px; letter-spacing:-.018em}
+.b.tut{--accent:var(--tut)}
+.b.tut rect{fill:var(--tut-fill); stroke:var(--tut)}
+.b.tut rect.spine{fill:var(--tut); stroke:none}
+.b.tut .bt,.b.tut .bg{fill:var(--tut-ink)}
+.b.tut .bh{fill:var(--tut)}
+.b.trv rect{fill:none; stroke:var(--trv); stroke-dasharray:3 3; opacity:.9}
+.hl{stroke:var(--trv); stroke-width:1; opacity:.3}
+.tl{fill:var(--trv); font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.11em}
+.bt{font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:12.5px; letter-spacing:-.012em}
+.bg{font-family:"IBM Plex Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:.02em}
+.bs{font-size:10px; font-weight:500; opacity:.85}
+.bh{font-family:"IBM Plex Mono",monospace; font-size:10px; opacity:.9}
+
+/* Live "happening now" marker */
+.b.now rect{stroke-width:2}
+.b.now .nowpill{fill:var(--accent); stroke:none; animation:nowPulse 2s ease-in-out infinite}
+.b.now .nowtx{
+  fill:var(--panel); font-family:"IBM Plex Mono",monospace; font-weight:500;
+  font-size:8px; letter-spacing:.09em; text-anchor:middle;
+  animation:nowPulse 2s ease-in-out infinite;
+}
+.nowline{stroke:var(--uwi); stroke-width:1.5}
+.nowdot{fill:var(--uwi)}
+@keyframes nowPulse{ 0%,100%{opacity:1} 50%{opacity:.45} }
+@media (prefers-reduced-motion:reduce){
+  .b.now .nowpill,.b.now .nowtx{animation:none}
+}
+
+.legend{display:flex; flex-wrap:wrap; gap:10px 26px; align-items:center; font-size:13px; color:var(--ink2)}
+.key{display:flex; align-items:center; gap:9px}
+.sw{width:26px; height:14px; border-radius:3px; border:1px solid}
+.sw.g1{background:var(--g1-fill); border-color:var(--g1)}
+.sw.g2{background:var(--g2-fill); border-color:var(--g2)}
+.sw.g3{background:var(--g3-fill); border-color:var(--g3)}
+.sw.uwi{background:var(--uwi-fill); border-color:var(--uwi)}
+.sw.tut{background:var(--tut-fill); border-color:var(--tut)}
+.sw.trv{background:none; border-color:var(--trv); border-style:dashed}
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:14px}
+.groups{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px}
+.gcard{
+  background:var(--panel); border:1px solid var(--rule); border-radius:8px;
+  padding:15px 18px 16px; display:flex; flex-direction:column; gap:9px;
+}
+.gcard.k1{border-top:3px solid var(--g1)} .gcard.k2{border-top:3px solid var(--g2)}
+.gcard.k3{border-top:3px solid var(--g3)}
+.gcard h3{
+  margin:0; font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:500;
+  letter-spacing:.02em; line-height:1.4;
+}
+.gcard.k1 h3{color:var(--g1-ink)} .gcard.k2 h3{color:var(--g2-ink)}
+.gcard.k3 h3{color:var(--g3-ink)}
+.gcard .course{
+  font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:14px;
+  letter-spacing:-.012em; color:var(--ink); margin-top:-4px;
+}
+.gcard ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px}
+.gcard li{
+  display:flex; justify-content:space-between; gap:12px; font-size:12.5px;
+  color:var(--ink2); border-bottom:1px dotted var(--rule); padding-bottom:4px;
+}
+.gcard li:last-child{border-bottom:none}
+.gcard li b{color:var(--ink); font-weight:600; white-space:nowrap}
+.gcard li span{font-family:"IBM Plex Mono",monospace; font-size:11.5px; white-space:nowrap}
+.gcard .tot{font-size:11.5px; color:var(--ink3); font-family:"IBM Plex Mono",monospace}
+.sechead{
+  font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:20px;
+  letter-spacing:-.016em; margin:0 0 -14px;
+}
+.card{
+  background:var(--panel); border:1px solid var(--rule); border-top:3px solid var(--uwi);
+  border-radius:8px; padding:15px 18px 17px; display:flex; flex-direction:column; gap:5px;
+}
+.card .lb{
+  font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink3);
+}
+.card .tm{
+  font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:19px;
+  color:var(--uwi-ink); letter-spacing:-.012em;
+}
+.card .note{font-size:12.5px; color:var(--ink2); line-height:1.45}
+footer{
+  border-top:1px solid var(--rule); padding-top:16px; font-size:12.5px;
+  color:var(--ink3); line-height:1.62; max-width:74ch;
+}
+footer b{color:var(--ink2); font-weight:600}
