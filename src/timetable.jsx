@@ -1,23 +1,20 @@
 import { useState, useEffect } from "react";
 
 // Weekly timetable — Semester 1, 2026/27, P. Logan.
-// Design ported from the published "Two-Campus Week" artifact; geometry mirrors
-// build_week.py in the iot-timetable working repo. Keep BLOCKS in step with it.
+// Design ported from the published "Two-Campus Week" artifact; the desktop
+// geometry mirrors build_week.py in the iot-timetable working repo.
+// Keep BLOCKS in step with it.
+//
+// The grid is drawn as an SVG with a viewBox, so it scales to its container
+// rather than scrolling sideways. Three geometry profiles share one renderer:
+// the wide desktop grid, a compact all-days mobile week, and a single day.
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sunday"];
+const DAY_ABBR = ["M", "T", "W", "T", "F", "S"];
 const DAY_INDEX_MAP = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 0: 5 }; // JS getDay() -> DAYS index
-const ND = DAYS.length;
 const H0 = 8;
 const H1 = 20;
-const PADL = 74;
-const PADT = 56;
-const COLW = 184;
-const ROWH = 50;
-const W = PADL + COLW * ND + 10;
-const H = PADT + ROWH * (H1 - H0) + 10;
-
-const X = (d) => PADL + d * COLW;
-const Y = (h) => PADT + (h - H0) * ROWH;
+const MOBILE_MAX = 767;
 
 // day, start, end, kind, title, group, room
 // kind g1/g2/g3 = ECC, coloured by the class group taking the session
@@ -42,6 +39,13 @@ const BLOCKS = [
   [2, 19, 20, "tut", "Physics tutorial", "Arush", ""],
   [5, 12, 14, "tut", "Physics tutorial", "Arush", ""],
 ];
+
+// Geometry profiles. `detail` picks how much text a block carries.
+const PROFILES = {
+  desktop: { PADL: 74, PADT: 56, COLW: 184, ROWH: 50, PADR: 10, detail: "full", hourFmt: "long" },
+  week: { PADL: 27, PADT: 30, COLW: 56, ROWH: 44, PADR: 3, detail: "compact", hourFmt: "short" },
+  day: { PADL: 48, PADT: 30, COLW: 320, ROWH: 54, PADR: 4, detail: "full", hourFmt: "long" },
+};
 
 const GROUPS = [
   {
@@ -110,6 +114,13 @@ function hm(v) {
   return v === Math.trunc(v) ? `${v}:00` : `${Math.trunc(v)}:30`;
 }
 
+// Short label for the narrow mobile week columns: the course code, or the
+// student's name for a tutorial.
+function shortLabel([, , , kind, , grp, room]) {
+  if (kind === "tut") return grp;
+  return room.split("/")[0].trim().replace(/\s+/g, "");
+}
+
 function NowPill({ x, y }) {
   return (
     <g>
@@ -121,37 +132,53 @@ function NowPill({ x, y }) {
   );
 }
 
-function Block({ block, isNow }) {
-  const [d, st, e, kind, title, grp, room] = block;
-  const x = X(d) + 4;
-  const y = Y(st) + 3;
-  const w = COLW - 8;
-  const hgt = (e - st) * ROWH - 6;
-  const tx = x + 14;
+function Block({ block, isNow, col, profile }) {
+  const [, st, e, kind, title, grp, room] = block;
+  const { PADL, PADT, COLW, ROWH, detail } = profile;
+  const compact = detail === "compact";
+
+  const x = PADL + col * COLW + (compact ? 2 : 4);
+  const y = PADT + (st - H0) * ROWH + (compact ? 2 : 3);
+  const w = COLW - (compact ? 4 : 8);
+  const hgt = (e - st) * ROWH - (compact ? 4 : 6);
+  const tx = x + (compact ? 5 : 14);
   const cls = `b ${kind}${isNow ? " now" : ""}`;
-  const pill = isNow ? <NowPill x={x + w - 40} y={y + 6} /> : null;
+  const pill = isNow && !compact ? <NowPill x={x + w - 40} y={y + 6} /> : null;
 
   if (kind === "trv") {
     return (
       <g className={cls}>
         <rect x={x} y={y} width={w} height={hgt} rx="3" />
         <rect x={x} y={y} width={w} height={hgt} rx="3" fill="url(#hatch)" stroke="none" />
-        <text className="tl" x={x + 12} y={y + hgt / 2 + 4}>
-          TRAVEL ECC → UWI
-        </text>
+        {compact ? (
+          <text className="tl xs" x={x + w / 2} y={y + hgt / 2 + 3} textAnchor="middle">
+            travel
+          </text>
+        ) : (
+          <text className="tl" x={x + 12} y={y + hgt / 2 + 4}>
+            TRAVEL ECC → UWI
+          </text>
+        )}
       </g>
     );
   }
 
-  if (kind === "tut") {
+  // Narrow mobile column: a course code and the start time is all that fits.
+  if (compact) {
+    const tiny = hgt < 34;
     return (
       <g className={cls}>
         <rect x={x} y={y} width={w} height={hgt} rx="3" />
-        <rect className="spine" x={x} y={y} width="4" height={hgt} />
-        <text className="bt" x={tx} y={y + 16}>{title}</text>
-        <text className="bg" x={tx} y={y + 28}>{grp}</text>
-        <text className="bh" x={tx} y={y + 40}>{hm(st)}–{hm(e)}</text>
-        {pill}
+        <rect className="spine" x={x} y={y} width="3" height={hgt} />
+        <text className="mt" x={tx} y={y + 12}>
+          {shortLabel(block)}
+        </text>
+        {!tiny && (
+          <text className="mh" x={tx} y={y + 23}>
+            {hm(st)}
+          </text>
+        )}
+        {isNow && <circle className="nowdot" cx={x + w - 6} cy={y + 6} r="3" />}
       </g>
     );
   }
@@ -175,6 +202,19 @@ function Block({ block, isNow }) {
             <text className="bh" x={tx} y={y + hgt - 9}>{hm(st)}–{hm(e)}</text>
           </>
         )}
+        {pill}
+      </g>
+    );
+  }
+
+  if (kind === "tut") {
+    return (
+      <g className={cls}>
+        <rect x={x} y={y} width={w} height={hgt} rx="3" />
+        <rect className="spine" x={x} y={y} width="4" height={hgt} />
+        <text className="bt" x={tx} y={y + 16}>{title}</text>
+        <text className="bg" x={tx} y={y + 28}>{grp}</text>
+        <text className="bh" x={tx} y={y + 40}>{hm(st)}–{hm(e)}</text>
         {pill}
       </g>
     );
@@ -206,7 +246,18 @@ function Block({ block, isNow }) {
   );
 }
 
-function Grid({ now }) {
+// `days` is the list of day indices to draw, in column order.
+function Grid({ now, days, profile, onPickDay }) {
+  const single = days.length === 1;
+  const { PADL, PADT, COLW, ROWH, PADR, hourFmt } = profile;
+  const compact = profile.detail === "compact";
+  const nCols = days.length;
+  const W = PADL + COLW * nCols + PADR;
+  const H = PADT + ROWH * (H1 - H0) + PADR;
+  const X = (col) => PADL + col * COLW;
+  const Y = (h) => PADT + (h - H0) * ROWH;
+  const headTop = PADT - (compact ? 18 : 30);
+
   const hours = [];
   for (let h = H0; h <= H1; h++) hours.push(h);
 
@@ -214,14 +265,15 @@ function Grid({ now }) {
   const nowHour = now.getHours() + now.getMinutes() / 60;
   const isNowBlock = ([d, st, e]) =>
     todayIndex !== undefined && d === todayIndex && nowHour >= st && nowHour < e;
-  const showNowLine = todayIndex !== undefined && nowHour >= H0 && nowHour <= H1;
+  const todayCol = days.indexOf(todayIndex);
+  const showNowLine = todayCol !== -1 && nowHour >= H0 && nowHour <= H1;
 
   return (
     <svg
-      className="tt"
+      className={onPickDay ? "tt tappable" : "tt"}
       viewBox={`0 0 ${W} ${H}`}
       role="img"
-      aria-label="Weekly timetable showing ECC classes, the three Engineering IoT Systems blocks and the physics tutorials"
+      aria-label="Timetable showing ECC classes, the Engineering IoT Systems blocks and the physics tutorials"
     >
       <defs>
         <pattern
@@ -241,45 +293,65 @@ function Grid({ now }) {
             className={h < H1 ? "rule" : "rule edge"}
             x1={PADL}
             y1={Y(h)}
-            x2={PADL + COLW * ND}
+            x2={PADL + COLW * nCols}
             y2={Y(h)}
           />
-          <text className="hr" x={PADL - 14} y={Y(h) + 4}>
-            {String(h).padStart(2, "0")}:00
+          <text className={compact ? "hr xs" : "hr"} x={PADL - (compact ? 5 : 14)} y={Y(h) + 4}>
+            {hourFmt === "short" ? h : `${String(h).padStart(2, "0")}:00`}
           </text>
         </g>
       ))}
 
-      {DAYS.map((day, d) => (
-        <g key={day}>
-          <line className="rule" x1={X(d)} y1={PADT - 30} x2={X(d)} y2={Y(H1)} />
-          <text className={d === todayIndex ? "day istoday" : "day"} x={X(d) + 12} y={PADT - 12}>
-            {day}
-          </text>
+      {days.map((d, col) => (
+        <g
+          key={d}
+          className={onPickDay ? "daycol tap" : "daycol"}
+          onClick={onPickDay ? () => onPickDay(d) : undefined}
+        >
+          {onPickDay && (
+            <rect className="hit" x={X(col)} y={headTop} width={COLW} height={Y(H1) - headTop} />
+          )}
+          <line className="rule" x1={X(col)} y1={headTop} x2={X(col)} y2={Y(H1)} />
+          {!single && (
+            <text
+              className={d === todayIndex ? "day istoday" : "day"}
+              x={X(col) + (compact ? COLW / 2 : 12)}
+              y={PADT - (compact ? 6 : 12)}
+              textAnchor={compact ? "middle" : "start"}
+            >
+              {compact ? DAY_ABBR[d] : DAYS[d]}
+            </text>
+          )}
         </g>
       ))}
       <line
         className="rule"
-        x1={PADL + COLW * ND}
-        y1={PADT - 30}
-        x2={PADL + COLW * ND}
+        x1={PADL + COLW * nCols}
+        y1={headTop}
+        x2={PADL + COLW * nCols}
         y2={Y(H1)}
       />
 
-      {BLOCKS.map((b, i) => (
-        <Block key={i} block={b} isNow={isNowBlock(b)} />
+      {BLOCKS.filter(([d]) => days.includes(d)).map((b, i) => (
+        <Block
+          key={i}
+          block={b}
+          col={days.indexOf(b[0])}
+          profile={profile}
+          isNow={isNowBlock(b)}
+        />
       ))}
 
       {showNowLine && (
         <g>
           <line
             className="nowline"
-            x1={X(todayIndex)}
+            x1={X(todayCol)}
             y1={Y(nowHour)}
-            x2={X(todayIndex) + COLW}
+            x2={X(todayCol) + COLW}
             y2={Y(nowHour)}
           />
-          <circle className="nowdot" cx={X(todayIndex)} cy={Y(nowHour)} r="3.5" />
+          <circle className="nowdot" cx={X(todayCol)} cy={Y(nowHour)} r="3.5" />
         </g>
       )}
     </svg>
@@ -288,10 +360,42 @@ function Grid({ now }) {
 
 export default function Timetable() {
   const [now, setNow] = useState(() => new Date());
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth <= MOBILE_MAX
+  );
+  const [view, setView] = useState("week"); // mobile only: "week" | "day"
+  const [day, setDay] = useState(() => {
+    const d = DAY_INDEX_MAP[new Date().getDay()];
+    return d === undefined ? 0 : d; // Saturday falls back to Monday
+  });
+
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60_000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_MAX}px)`);
+    const onChange = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  const allDays = DAYS.map((_, i) => i);
+  const pickDay = (d) => {
+    setDay(d);
+    setView("day");
+  };
+  const stepDay = (delta) => setDay((d) => (d + delta + DAYS.length) % DAYS.length);
+
+  let grid;
+  if (!isMobile) {
+    grid = <Grid now={now} days={allDays} profile={PROFILES.desktop} />;
+  } else if (view === "week") {
+    grid = <Grid now={now} days={allDays} profile={PROFILES.week} onPickDay={pickDay} />;
+  } else {
+    grid = <Grid now={now} days={[day]} profile={PROFILES.day} />;
+  }
 
   return (
     <div className="wrap">
@@ -307,9 +411,37 @@ export default function Timetable() {
         </p>
       </header>
 
-      <div className="board">
-        <Grid now={now} />
-      </div>
+      {isMobile && (
+        <div className="mbar">
+          <div className="mtoggle" role="group" aria-label="Timetable view">
+            {["week", "day"].map((v) => (
+              <button
+                key={v}
+                type="button"
+                className={view === v ? "on" : ""}
+                aria-pressed={view === v}
+                onClick={() => setView(v)}
+              >
+                {v === "week" ? "Week" : "Day"}
+              </button>
+            ))}
+          </div>
+          {view === "day" && (
+            <div className="mnav">
+              <button type="button" onClick={() => stepDay(-1)} aria-label="Previous day">
+                ‹
+              </button>
+              <span>{DAYS[day]}</span>
+              <button type="button" onClick={() => stepDay(1)} aria-label="Next day">
+                ›
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="board">{grid}</div>
+      {isMobile && view === "week" && <p className="mhint">Tap a day to open it on its own.</p>}
 
       <div className="legend">
         {LEGEND.map(([k, label]) => (
@@ -327,9 +459,9 @@ export default function Timetable() {
             <h3>{g.heading}</h3>
             <div className="course">{g.course}</div>
             <ul>
-              {g.rows.map(([day, when], i) => (
+              {g.rows.map(([d, when], i) => (
                 <li key={i}>
-                  <b>{day}</b>
+                  <b>{d}</b>
                   <span>{when}</span>
                 </li>
               ))}
