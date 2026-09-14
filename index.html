@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Tints the Android status bar / browser chrome to match the page.
+         The manifest's theme_color is a single fixed value, so it cannot follow
+         the system theme on its own; these override it per colour scheme.
+         Keep both in step with --paper in src/index.css. -->
+    <meta name="theme-color" content="#EEF1F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0E1214" media="(prefers-color-scheme: dark)" />
     <title>Two-Campus Week — Timetable</title>
   </head>
   <body>
