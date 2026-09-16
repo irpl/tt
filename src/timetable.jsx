@@ -536,8 +536,8 @@ export default function Timetable() {
         clash with ECC or ECSE 3038. The Wednesday pair does close Wednesday 17:00–18:00 as a
         fallback slot for block B.
         <br />
-        <b>Provisional.</b> Friday’s 16:00–17:00 lab is the only thing blocking a 17:00 start —
-        pending confirmation with the coordinator.
+        <b>Confirmed.</b> Block C is fixed at Friday 18:00–20:00 — confirmed 15 September 2026 and
+        not moving. The 16:00–17:00 ECC lab before it is no longer treated as a blocker.
       </footer>
     </div>
   );
