@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 
 // Weekly timetable — Semester 1, 2026/27, P. Logan.
 // Design ported from the published "Two-Campus Week" artifact; the desktop
@@ -55,6 +55,7 @@ const PROFILES = {
 const GROUPS = [
   {
     k: "k1",
+    school: "ecc",
     heading: "ADCS1 · ADCSNM1A · AMIS1A",
     course: "Intro to Programming · CPRG1201",
     rows: [
@@ -66,6 +67,7 @@ const GROUPS = [
   },
   {
     k: "k2",
+    school: "ecc",
     heading: "ADCET1A · ADIT1",
     course: "Intro to Programming · CPRG1201",
     rows: [
@@ -77,6 +79,7 @@ const GROUPS = [
   },
   {
     k: "k3",
+    school: "ecc",
     heading: "ADIT2",
     course: "Web Development II (ASP.net) · CWEB2302",
     rows: [
@@ -88,6 +91,7 @@ const GROUPS = [
   },
   {
     k: "kuwi",
+    school: "uwi",
     heading: "Electronics · Bio Med · Electrical",
     course: "Engineering IoT Systems · ECSE 3038",
     rows: [
@@ -99,6 +103,7 @@ const GROUPS = [
   },
   {
     k: "ktut",
+    school: "tut",
     heading: "Hinal",
     course: "Physics tutorial · private",
     rows: [["Wednesday", "17:30 – 18:30", "Online"]],
@@ -106,6 +111,7 @@ const GROUPS = [
   },
   {
     k: "ktut",
+    school: "tut",
     heading: "Arush",
     course: "Physics tutorial · private",
     rows: [
@@ -493,8 +499,10 @@ export default function Timetable() {
 
       <h2 className="sechead">Who you have, when</h2>
       <div className="groups">
-        {GROUPS.map((g) => (
-          <div className={`gcard ${g.k}`} key={g.heading}>
+        {GROUPS.map((g, gi) => (
+          <Fragment key={g.heading}>
+            {gi > 0 && GROUPS[gi - 1].school !== g.school && <div className="rowbreak" />}
+          <div className={`gcard ${g.k}`}>
             <h3>{g.heading}</h3>
             <div className="course">{g.course}</div>
             <ul>
@@ -510,6 +518,7 @@ export default function Timetable() {
             </ul>
             <div className="tot">{g.total}</div>
           </div>
+          </Fragment>
         ))}
       </div>
 
