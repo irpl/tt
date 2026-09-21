@@ -58,9 +58,9 @@ const GROUPS = [
     heading: "ADCS1 · ADCSNM1A · AMIS1A",
     course: "Intro to Programming · CPRG1201",
     rows: [
-      ["Monday", "08:00 – 10:00 · Lab 2"],
-      ["Tuesday", "12:00 – 14:00 · Lab 1"],
-      ["Thursday", "13:00 – 15:00 · Lab 2"],
+      ["Monday", "08:00 – 10:00", "Lab 2"],
+      ["Tuesday", "12:00 – 14:00", "Lab 1"],
+      ["Thursday", "13:00 – 15:00", "Lab 2"],
     ],
     total: "3 sessions · 6 h/week",
   },
@@ -69,9 +69,9 @@ const GROUPS = [
     heading: "ADCET1A · ADIT1",
     course: "Intro to Programming · CPRG1201",
     rows: [
-      ["Monday", "13:00 – 15:00 · Lab 1"],
-      ["Wednesday", "10:00 – 12:00 · Lab 1 + NetLab"],
-      ["Thursday", "08:00 – 10:00 · Lab 1"],
+      ["Monday", "13:00 – 15:00", "Lab 1"],
+      ["Wednesday", "10:00 – 12:00", "Lab 1 + NetLab"],
+      ["Thursday", "08:00 – 10:00", "Lab 1"],
     ],
     total: "3 sessions · 6 h/week",
   },
@@ -80,29 +80,39 @@ const GROUPS = [
     heading: "ADIT2",
     course: "Web Development II (ASP.net) · CWEB2302",
     rows: [
-      ["Tuesday", "14:00 – 17:00 · Lab 3"],
-      ["Friday", "11:00 – 14:00 · Lab 3"],
-      ["Friday", "16:00 – 17:00 · Lab 3"],
+      ["Tuesday", "14:00 – 17:00", "Lab 3"],
+      ["Friday", "11:00 – 14:00", "Lab 3"],
+      ["Friday", "16:00 – 17:00", "Lab 3"],
     ],
     total: "3 sessions · 7 h/week",
   },
-];
-
-const IOT_BLOCKS = [
   {
-    label: "Block A · Monday",
-    time: "17:00 – 19:00",
-    note: "ECC finishes 15:00. Two clear hours before you need to leave — one more than required.",
+    k: "kuwi",
+    heading: "Electronics · Bio Med · Electrical",
+    course: "Engineering IoT Systems · ECSE 3038",
+    rows: [
+      ["Monday", "17:00 – 19:00", "Video Conference Room"],
+      ["Wednesday", "14:00 – 15:00", "Engineering Computer Lab"],
+      ["Friday", "18:00 – 20:00", "Engineering Room B"],
+    ],
+    total: "3 sessions · 5 h/week",
   },
   {
-    label: "Block B · Wednesday",
-    time: "14:00 – 15:00",
-    note: "ECC finishes 12:00. Two clear hours, and nothing at ECC afterwards.",
+    k: "ktut",
+    heading: "Hinal",
+    course: "Physics tutorial · private",
+    rows: [["Wednesday", "17:30 – 18:30", "Online"]],
+    total: "1 session · 1 h/week",
   },
   {
-    label: "Block C · Friday",
-    time: "18:00 – 20:00",
-    note: "ECC now finishes 17:00. Exactly one travel hour — the tightest margin of the three, and the only block running past 19:00.",
+    k: "ktut",
+    heading: "Arush",
+    course: "Physics tutorial · private",
+    rows: [
+      ["Wednesday", "19:00 – 20:00", "Online"],
+      ["Sunday", "12:00 – 14:00", "Online"],
+    ],
+    total: "2 sessions · 3 h/week",
   },
 ];
 
@@ -484,29 +494,21 @@ export default function Timetable() {
       <h2 className="sechead">Who you have, when</h2>
       <div className="groups">
         {GROUPS.map((g) => (
-          <div className={`gcard ${g.k}`} key={g.k}>
+          <div className={`gcard ${g.k}`} key={g.heading}>
             <h3>{g.heading}</h3>
             <div className="course">{g.course}</div>
             <ul>
-              {g.rows.map(([d, when], i) => (
+              {g.rows.map(([d, when, room], i) => (
                 <li key={i}>
-                  <b>{d}</b>
-                  <span>{when}</span>
+                  <div className="ln">
+                    <b>{d}</b>
+                    <span>{when}</span>
+                  </div>
+                  <em className="rm">{room}</em>
                 </li>
               ))}
             </ul>
             <div className="tot">{g.total}</div>
-          </div>
-        ))}
-      </div>
-
-      <h2 className="sechead">Engineering IoT Systems blocks</h2>
-      <div className="cards">
-        {IOT_BLOCKS.map((c) => (
-          <div className="card" key={c.label}>
-            <span className="lb">{c.label}</span>
-            <span className="tm">{c.time}</span>
-            <span className="note">{c.note}</span>
           </div>
         ))}
       </div>
