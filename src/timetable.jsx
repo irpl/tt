@@ -28,7 +28,7 @@ const BLOCKS = [
   [0, 17, 19, "uwi", "Engineering IoT Systems", "", "ECSE 3038 / Block A"],
   [1, 12, 14, "g1", "Intro to Programming", "ADCS1 · ADCSNM1A · AMIS1A", "CPRG1201 / Lab 1"],
   [1, 14, 17, "g3", "Web Development II", "ADIT2", "CWEB2302 / Lab 3"],
-  [2, 10, 12, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1 + NetLab"],
+  [2, 10, 12, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
   [2, 13, 14, "trv", "", "", ""],
   [2, 14, 15, "uwi", "Engineering IoT Systems", "", "ECSE 3038 / Block B"],
   [3, 8, 10, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
@@ -72,7 +72,7 @@ const GROUPS = [
     course: "Intro to Programming · CPRG1201",
     rows: [
       ["Monday", "13:00 – 15:00", "Lab 1"],
-      ["Wednesday", "10:00 – 12:00", "Lab 1 + NetLab"],
+      ["Wednesday", "10:00 – 12:00", "Lab 1"],
       ["Thursday", "08:00 – 10:00", "Lab 1"],
     ],
     total: "3 sessions · 6 h/week",
