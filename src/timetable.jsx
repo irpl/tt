@@ -26,6 +26,7 @@ const BLOCKS = [
   [0, 13, 15, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
   [0, 16, 17, "trv", "", "", ""],
   [0, 17, 19, "uwi", "Engineering IoT Systems", "", "ECSE 3038 / Block A"],
+  [1, 9, 10, "uwi", "Capstone supervision", "", "ECNG 3020 / Nia-Ashley Harris"],
   [1, 12, 14, "g1", "Intro to Programming", "ADCS1 · ADCSNM1A · AMIS1A", "CPRG1201 / Lab 1"],
   [1, 14, 17, "g3", "Web Development II", "ADIT2", "CWEB2302 / Lab 3"],
   [2, 10, 12, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
@@ -102,6 +103,14 @@ const GROUPS = [
     total: "3 sessions · 5 h/week",
   },
   {
+    k: "kuwi",
+    school: "uwi",
+    heading: "Nia-Ashley Harris",
+    course: "Capstone supervision · ECNG 3020",
+    rows: [["Tuesday", "09:00 – 10:00", "Weekly from 13 Oct · room TBC"]],
+    total: "1 session · 1 h/week",
+  },
+  {
     k: "ktut",
     school: "tut",
     heading: "Hinal",
@@ -126,7 +135,7 @@ const LEGEND = [
   ["g1", "ADCS1 · ADCSNM1A · AMIS1A — Intro"],
   ["g2", "ADCET1A · ADIT1 — Intro"],
   ["g3", "ADIT2 — Web Dev II"],
-  ["uwi", "ECSE 3038 — Engineering IoT Systems, 5 hrs/week"],
+  ["uwi", "UWI — ECSE 3038 Engineering IoT Systems (5 hrs/week) and ECNG 3020 capstone supervision"],
   ["tut", "Physics tutorials — private"],
   ["trv", "Required travel hour"],
   ["bae", "JanBae😘🥰"],
@@ -546,6 +555,9 @@ export default function Timetable() {
         17:30–18:30 (Hinal), Wednesday 19:00–20:00 (Arush) and Sunday 12:00–14:00 (Arush). None
         clash with ECC or ECSE 3038. The Wednesday pair does close Wednesday 17:00–18:00 as a
         fallback slot for block B.
+        <br />
+        <b>Capstone supervision.</b> A weekly one-hour meeting with Nia-Ashley Harris (ECNG 3020)
+        runs Tuesday 09:00–10:00 from 13 October 2026, ahead of the 12:00 ECC block.
         <br />
         <b>Confirmed.</b> Block C is fixed at Friday 18:00–20:00 — confirmed 15 September 2026 and
         not moving. The 16:00–17:00 ECC lab before it is no longer treated as a blocker.
