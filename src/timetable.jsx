@@ -30,14 +30,13 @@ const BLOCKS = [
   [1, 12, 14, "g1", "Intro to Programming", "ADCS1 · ADCSNM1A · AMIS1A", "CPRG1201 / Lab 1"],
   [1, 14, 17, "g3", "Web Development II", "ADIT2", "CWEB2302 / Lab 3"],
   [2, 10, 12, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
-  [2, 12, 13, "trv", "", "", ""],
-  [2, 13, 14, "uwi", "Capstone supervision", "", "ECNG 3020 / BME group"],
+  [2, 13, 14, "trv", "", "", ""],
   [2, 14, 15, "uwi", "Engineering IoT Systems", "", "ECSE 3038 / Block B"],
   [3, 8, 10, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
   [3, 13, 15, "g1", "Intro to Programming", "ADCS1 · ADCSNM1A · AMIS1A", "CPRG1201 / Lab 2"],
   [4, 11, 14, "g3", "Web Development II", "ADIT2", "CWEB2302 / Lab 3"],
-  [4, 16, 17, "g3", "Web Development II", "ADIT2", "CWEB2302 / Lab 3"],
-  [4, 17, 18, "trv", "", "", ""],
+  [4, 15, 16, "trv", "", "", ""],
+  [4, 16, 17, "uwi", "Capstone supervision", "", "ECNG 3020 / BME group"],
   [4, 18, 20, "uwi", "Engineering IoT Systems", "", "ECSE 3038 / Block C"],
   [2, 17.5, 18.5, "tut", "Physics tutorial", "Hinal", ""],
   [2, 19, 20, "tut", "Physics tutorial", "Arush", ""],
@@ -87,9 +86,8 @@ const GROUPS = [
     rows: [
       ["Tuesday", "14:00 – 17:00", "Lab 3"],
       ["Friday", "11:00 – 14:00", "Lab 3"],
-      ["Friday", "16:00 – 17:00", "Lab 3"],
     ],
-    total: "3 sessions · 7 h/week",
+    total: "2 sessions · 6 h/week",
   },
   {
     k: "kuwi",
@@ -116,7 +114,7 @@ const GROUPS = [
     school: "uwi",
     heading: "BME capstone group (Dr. Wright’s six)",
     course: "Capstone supervision · ECNG 3020",
-    rows: [["Wednesday", "13:00 – 14:00", "Weekly from 14 Oct · Engineering Conference Room"]],
+    rows: [["Friday", "16:00 – 17:00", "Weekly from 16 Oct · Engineering Conference Room"]],
     total: "1 session · 1 h/week",
   },
   {
@@ -567,11 +565,12 @@ export default function Timetable() {
         <br />
         <b>Capstone supervision.</b> A weekly one-hour meeting with Nia-Ashley Harris (ECNG 3020)
         runs Tuesday 09:00–10:00 from 13 October 2026, ahead of the 12:00 ECC block. The BME
-        capstone group meets Wednesday 13:00–14:00 from 14 October, so Wednesday’s travel hour
-        moves up to 12:00–13:00, straight after the ECC class.
+        capstone group meets Friday 16:00–17:00 from 16 October, so Friday’s travel hour moves to
+        15:00–16:00. The Friday 16:00 Web Development II hour is off the page: the class does not
+        meet then (students work through a posted practical).
         <br />
         <b>Confirmed.</b> Block C is fixed at Friday 18:00–20:00 — confirmed 15 September 2026 and
-        not moving. The 16:00–17:00 ECC lab before it is no longer treated as a blocker.
+        not moving.
       </footer>
     </div>
   );
