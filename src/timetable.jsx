@@ -116,7 +116,7 @@ const GROUPS = [
     school: "uwi",
     heading: "BME capstone group (Dr. Wright’s six)",
     course: "Capstone supervision · ECNG 3020",
-    rows: [["Wednesday", "13:00 – 14:00", "Weekly from 14 Oct · UWI, room TBC"]],
+    rows: [["Wednesday", "13:00 – 14:00", "Weekly from 14 Oct · Engineering Conference Room"]],
     total: "1 session · 1 h/week",
   },
   {
