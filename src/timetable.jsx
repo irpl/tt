@@ -30,7 +30,8 @@ const BLOCKS = [
   [1, 12, 14, "g1", "Intro to Programming", "ADCS1 · ADCSNM1A · AMIS1A", "CPRG1201 / Lab 1"],
   [1, 14, 17, "g3", "Web Development II", "ADIT2", "CWEB2302 / Lab 3"],
   [2, 10, 12, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
-  [2, 13, 14, "trv", "", "", ""],
+  [2, 12, 13, "trv", "", "", ""],
+  [2, 13, 14, "uwi", "Capstone supervision", "", "ECNG 3020 / BME group"],
   [2, 14, 15, "uwi", "Engineering IoT Systems", "", "ECSE 3038 / Block B"],
   [3, 8, 10, "g2", "Intro to Programming", "ADCET1A · ADIT1", "CPRG1201 / Lab 1"],
   [3, 13, 15, "g1", "Intro to Programming", "ADCS1 · ADCSNM1A · AMIS1A", "CPRG1201 / Lab 2"],
@@ -108,6 +109,14 @@ const GROUPS = [
     heading: "Nia-Ashley Harris",
     course: "Capstone supervision · ECNG 3020",
     rows: [["Tuesday", "09:00 – 10:00", "Weekly from 13 Oct · room TBC"]],
+    total: "1 session · 1 h/week",
+  },
+  {
+    k: "kuwi",
+    school: "uwi",
+    heading: "BME capstone group (Dr. Wright’s six)",
+    course: "Capstone supervision · ECNG 3020",
+    rows: [["Wednesday", "13:00 – 14:00", "Weekly from 14 Oct · UWI, room TBC"]],
     total: "1 session · 1 h/week",
   },
   {
@@ -557,7 +566,9 @@ export default function Timetable() {
         fallback slot for block B.
         <br />
         <b>Capstone supervision.</b> A weekly one-hour meeting with Nia-Ashley Harris (ECNG 3020)
-        runs Tuesday 09:00–10:00 from 13 October 2026, ahead of the 12:00 ECC block.
+        runs Tuesday 09:00–10:00 from 13 October 2026, ahead of the 12:00 ECC block. The BME
+        capstone group meets Wednesday 13:00–14:00 from 14 October, so Wednesday’s travel hour
+        moves up to 12:00–13:00, straight after the ECC class.
         <br />
         <b>Confirmed.</b> Block C is fixed at Friday 18:00–20:00 — confirmed 15 September 2026 and
         not moving. The 16:00–17:00 ECC lab before it is no longer treated as a blocker.
